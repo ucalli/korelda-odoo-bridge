@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Editör / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Test / araç çıktıları
+.pytest_cache/
+.coverage
+htmlcov/
