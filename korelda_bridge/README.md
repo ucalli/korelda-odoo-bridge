@@ -32,7 +32,7 @@ is the Odoo-side receiver for those alarms.
 
 ## Requirements
 
-- Odoo **18.0**, Community or Enterprise, **self-hosted**. Odoo Online/SaaS
+- Odoo **19.0**, Community or Enterprise, **self-hosted**. Odoo Online/SaaS
   cannot install custom modules.
 - Standard `maintenance` and `mail` modules (both shipped with Odoo).
 - The Odoo instance must be reachable over **HTTPS** from the KORELDA

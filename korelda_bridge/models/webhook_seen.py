@@ -27,10 +27,9 @@ class KoreldaWebhookSeen(models.Model):
         help="Kaydedilen X-BMS-Signature başlığı. Gövde değil, secret değil.",
     )
 
-    _sql_constraints = [
-        (
-            "signature_uniq",
-            "unique(signature)",
-            "Bu imza zaten işlendi (replay koruması).",
-        ),
-    ]
+    # Odoo 19 API — bkz. `korelda_mapping.py`. Burada kaybı daha ağırdı:
+    # kısıt oluşmazsa replay korumasının YARIŞ backstop'u yok olur.
+    _signature_uniq = models.Constraint(
+        "unique(signature)",
+        "Bu imza zaten işlendi (replay koruması).",
+    )

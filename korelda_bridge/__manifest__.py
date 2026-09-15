@@ -1,6 +1,6 @@
 {
     "name": "KORELDA Bridge — Alarm to Maintenance",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Maintenance",
     "license": "LGPL-3",
     "author": "KORELDA",
@@ -44,7 +44,7 @@ What it does not do
 Requirements
 ------------
 
-Odoo 18.0, Community or Enterprise, **self-hosted** — Odoo Online/SaaS cannot
+Odoo 19.0, Community or Enterprise, **self-hosted** — Odoo Online/SaaS cannot
 install custom modules. The Odoo instance must be reachable over HTTPS from
 the KORELDA installation.
 

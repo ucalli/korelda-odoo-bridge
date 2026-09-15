@@ -32,13 +32,14 @@ class KoreldaMapping(models.Model):
     )
     active = fields.Boolean(default=True)
 
-    _sql_constraints = [
-        (
-            "rule_id_uniq",
-            "unique(rule_id)",
-            "Bu KORELDA kuralı için zaten bir eşleme var.",
-        ),
-    ]
+    # Odoo 19 API. `_sql_constraints` 19'da **sessizce yok sayılıyor**
+    # ("no longer supported, please define models.Constraint") — kısıt hiç
+    # oluşmaz ve aynı kural için iki eşleme kaydedilebilirdi. 18.0 dalı
+    # `_sql_constraints` kullanmaya devam eder (orada `models.Constraint` yok).
+    _rule_id_uniq = models.Constraint(
+        "unique(rule_id)",
+        "Bu KORELDA kuralı için zaten bir eşleme var.",
+    )
 
     @api.constrains("rule_id")
     def _check_rule_id(self):
