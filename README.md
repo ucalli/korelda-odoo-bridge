@@ -55,4 +55,8 @@ use a long random value.
 
 ## Licence
 
-LGPL-3 — see [LICENSE](LICENSE).
+LGPL-3. The LGPL adds permissions on top of the GPL, so both texts apply:
+
+- [LICENSE](LICENSE) — GNU Lesser General Public License v3
+- [COPYING](COPYING) — GNU General Public License v3, which the LGPL
+  incorporates by reference
