@@ -19,12 +19,9 @@ from odoo import http
 from odoo.http import request
 
 from ..tools import webhook as wh
+from ..tools.params import SECRET_PARAM
 
 _logger = logging.getLogger(__name__)
-
-#: Paylaşılan secret'ın saklandığı sistem parametresi. KORELDA tarafındaki
-#: ``BMS_WEBHOOK_SECRET_<ID>`` ile aynı değer olmalıdır.
-SECRET_PARAM = "korelda_bridge.webhook_secret"
 
 #: Görülmüş-imza kayıtlarının yaşam süresi. Tazelik penceresinden KISA
 #: OLAMAZ; kısa olursa pencere içinde tekrar açılırdı. Pay bırakılmıştır.
@@ -96,17 +93,21 @@ class KoreldaWebhookController(http.Controller):
     # ── alarm işleyicisi ────────────────────────────────────────────────
 
     def _handle_alarm(self, payload):
-        """``rule_alarm`` → bakım talebi.
+        """``rule_alarm`` → bakım talebi (K10-K13).
 
-        FAZ 1.3'te dolacak (model + eşleme + kayıt açma). Şimdilik gövdeyi
-        kabul eder ve **işlemediğini dürüstçe söyler** — sessizce "handled"
-        demek, alarmın kaybolduğunu gizlerdi.
+        Karar ve kayıt işlemleri modelde (``maintenance.request``); controller
+        yalnız çağırır ve sonucu yanıta çevirir.
         """
-        _logger.info(
-            "KORELDA webhook: alarm alındı (rule=%s) — işleyici henüz bağlı değil",
-            (payload.get("rule") or {}).get("id"),
+        sonuc = (
+            request.env["maintenance.request"]
+            .sudo()
+            .korelda_process_alarm(payload)
         )
-        return self._ok(handled=False, reason="alarm_handler_pending")
+        return self._ok(
+            handled=sonuc.get("handled"),
+            reason=sonuc.get("reason"),
+            request_id=sonuc.get("request_id"),
+        )
 
     # ── görülmüş-imza deposu ────────────────────────────────────────────
 
@@ -147,7 +148,9 @@ class KoreldaWebhookController(http.Controller):
         govde = {"ok": True, "handled": bool(handled)}
         if reason:
             govde["reason"] = reason
-        govde.update(extra)
+        # `None` alanları gövdeye koymayız — alıcı "var ama boş" ile "yok"u
+        # ayırt etmek zorunda kalmasın.
+        govde.update({k: v for k, v in extra.items() if v is not None})
         return request.make_json_response(govde, status=200)
 
     def _reject(self, reason):

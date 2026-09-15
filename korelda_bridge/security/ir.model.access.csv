@@ -1,1 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_korelda_mapping_user,korelda.mapping read,model_korelda_mapping,base.group_user,1,0,0,0
+access_korelda_mapping_manager,korelda.mapping manage,model_korelda_mapping,maintenance.group_equipment_manager,1,1,1,1
+access_korelda_webhook_seen_manager,korelda.webhook.seen read,model_korelda_webhook_seen,maintenance.group_equipment_manager,1,0,0,0
