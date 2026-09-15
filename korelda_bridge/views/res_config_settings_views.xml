@@ -1,8 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <!--
-        Ayar ekranı: paylaşılan secret + varsayılan ekipman.
-        İçerik FAZ 1.4'te gelir; dosya manifest'te listelendiği için
-        şimdiden var ve boş yüklenir (kurulum kırılmasın).
+        Ayarlar Maintenance uygulamasının KENDİ sekmesine eklenir; modül
+        `application: False` olduğu için kendi `<app>` sekmesini açmaz —
+        bir köprü modülü, ayar ekranında ayrı bir uygulama gibi görünmemeli.
+        Çapa Odoo 18.0 kaynağından doğrulandı:
+        `maintenance/views/res_config_settings_views.xml` → `<app name="maintenance">`.
+
+        K4 — burada YALNIZ bağlantı ayarları var. Kural, eşik ve cihaz
+        yapılandırması KORELDA'da kalır; buraya kopyalanmaz.
     -->
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.korelda_bridge</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="40"/>
+        <field name="inherit_id" ref="maintenance.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='maintenance']" position="inside">
+                <block title="KORELDA Bridge"
+                       name="korelda_bridge_block"
+                       help="Receive signed HVAC alarms from a KORELDA installation and open maintenance requests.">
+                    <setting string="Shared secret"
+                             help="The same value must be set on the KORELDA side. Every incoming delivery is authenticated with it — use a long random value, and a different one for each Odoo instance.">
+                        <field name="korelda_webhook_secret" password="True"/>
+                    </setting>
+                    <setting string="Default equipment"
+                             help="Used when an alarm's rule is not mapped to any equipment. May be left empty: the request is opened anyway and flagged as unmapped.">
+                        <field name="korelda_default_equipment_id"/>
+                    </setting>
+                    <setting string="Rule mapping"
+                             help="Map each KORELDA rule to the equipment it concerns.">
+                        <div class="mt8">
+                            <button name="%(action_korelda_mapping)d"
+                                    icon="fa-arrow-right"
+                                    type="action"
+                                    string="Rule mapping"
+                                    class="btn-link"/>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

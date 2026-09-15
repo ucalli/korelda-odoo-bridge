@@ -1,8 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <!-- ── Kural → ekipman eşlemesi (K10) ───────────────────────────── -->
+
+    <record id="korelda_mapping_view_list" model="ir.ui.view">
+        <field name="name">korelda.mapping.list</field>
+        <field name="model">korelda.mapping</field>
+        <field name="arch" type="xml">
+            <list string="KORELDA rule mapping" editable="bottom">
+                <field name="rule_id"/>
+                <field name="equipment_id"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="korelda_mapping_view_form" model="ir.ui.view">
+        <field name="name">korelda.mapping.form</field>
+        <field name="model">korelda.mapping</field>
+        <field name="arch" type="xml">
+            <form string="KORELDA rule mapping">
+                <sheet>
+                    <group>
+                        <field name="rule_id" placeholder="e.g. ahu1_supply_low"/>
+                        <field name="equipment_id"/>
+                        <field name="active"/>
+                    </group>
+                    <div class="text-muted">
+                        The rule id must match <code>rule.id</code> in the alarm
+                        sent by KORELDA, character for character.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="korelda_mapping_view_search" model="ir.ui.view">
+        <field name="name">korelda.mapping.search</field>
+        <field name="model">korelda.mapping</field>
+        <field name="arch" type="xml">
+            <search string="KORELDA rule mapping">
+                <field name="rule_id"/>
+                <field name="equipment_id"/>
+                <filter name="inactive" string="Archived"
+                        domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_equipment" string="Equipment"
+                            context="{'group_by': 'equipment_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_korelda_mapping" model="ir.actions.act_window">
+        <field name="name">KORELDA rule mapping</field>
+        <field name="res_model">korelda.mapping</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Map a KORELDA rule to a piece of equipment
+            </p>
+            <p>
+                An alarm whose rule is not mapped still opens a maintenance
+                request — it is just flagged as unmapped, so nothing is lost
+                while you fill this in.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_korelda_mapping"
+              name="KORELDA Rule Mapping"
+              parent="maintenance.menu_maintenance_configuration"
+              action="action_korelda_mapping"
+              groups="maintenance.group_equipment_manager"
+              sequence="5"/>
+
+    <!-- ── Bakım talebinde "eşlenmemiş" işareti (K10) ────────────────── -->
+
     <!--
-        korelda.mapping liste/form görünümü ve menüsü.
-        Model FAZ 1.3'te, görünümler FAZ 1.4'te gelir; dosya manifest'te
-        listelendiği için şimdiden var ve boş yüklenir (kurulum kırılmasın).
+        İşaret yalnız sohbet yorumunda kalsaydı kullanıcı listede göremezdi.
+        Çapa Odoo 18.0 kaynağından doğrulandı:
+        `maintenance/views/maintenance_views.xml` → `hr_equipment_request_view_form`
+        içinde `<field name="equipment_id" .../>`.
     -->
+    <record id="maintenance_request_view_form_korelda" model="ir.ui.view">
+        <field name="name">maintenance.request.form.inherit.korelda_bridge</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form"/>
+        <field name="arch" type="xml">
+            <field name="equipment_id" position="after">
+                <field name="korelda_unmapped" invisible="1"/>
+                <div colspan="2" invisible="not korelda_unmapped">
+                    <span class="badge text-bg-warning">
+                        KORELDA: equipment not mapped
+                    </span>
+                </div>
+                <field name="korelda_rule_id"
+                       readonly="1"
+                       invisible="not korelda_rule_id"
+                       groups="maintenance.group_equipment_manager"/>
+            </field>
+        </field>
+    </record>
+
 </odoo>

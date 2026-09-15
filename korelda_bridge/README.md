@@ -52,10 +52,69 @@ The shared secret is what authenticates every delivery. Anyone who holds it
 can open maintenance requests in your database — treat it like a password,
 and use a different one for every Odoo instance.
 
-## Status
+## Configuration
 
-Skeleton in place. The receiver, the model and the configuration screen land
-in the following steps; see the repository branches `18.0` and `19.0`.
+Everything lives in *Settings → Maintenance → KORELDA Bridge*:
+
+| Setting | Meaning |
+|---|---|
+| **Shared secret** | Authenticates every delivery. Same value on both sides. |
+| **Default equipment** | Used when a rule is not mapped. May be left empty. |
+| **Rule mapping** | *Maintenance → Configuration → KORELDA Rule Mapping*. Maps `rule.id` to a piece of equipment. |
+
+There is deliberately **no alarm configuration here**. Rules, thresholds and
+devices are defined in KORELDA and stay there; duplicating them in Odoo would
+give you two sources of truth that drift apart.
+
+A rule you have not mapped is not a failure: the request is opened anyway and
+flagged *equipment not mapped*, so the alarm is never lost while the mapping
+is still missing.
+
+## Deployment notes
+
+**The endpoint is unauthenticated by design.** It is a machine-to-machine
+route (`auth="none"`); the signature — not an Odoo login — is what proves the
+delivery is genuine. Two consequences:
+
+1. **Database selection.** The sender is not a browser and carries no session
+   cookie, so Odoo cannot pick a database from the session. Run either a
+   single-database instance or set `--db-filter` so the hostname resolves to
+   exactly one database. On a multi-database instance without a filter the
+   request cannot be routed and will fail.
+2. **Put it behind HTTPS.** Terminate TLS at your reverse proxy. The body
+   carries plant data and the signature is replayable within its window, so
+   it should never travel in clear text.
+
+**Workers.** Replay protection stores seen signatures in a database table, not
+in process memory, so it works with any number of Odoo workers.
+
+**Retries.** KORELDA does not retry, and does not follow redirects. Answer
+quickly (`2xx`) and do the slow work afterwards; a redirect is treated as a
+failure.
+
+## What the sender must guarantee
+
+The full receiver contract is published by KORELDA. In short, each delivery:
+
+- is a `POST` with the raw JSON body the signature was computed over;
+- carries `X-BMS-Signature: sha256=<hex>`, an HMAC-SHA256 over those exact
+  bytes;
+- carries a `ts` field. Deliveries older or newer than **5 minutes** are
+  rejected, and a signature that has already been processed is accepted but
+  **not** processed again (idempotent replay handling).
+
+Both checks are required: the time window alone would let an intercepted
+request be replayed inside it, and the seen-signature cache alone would let an
+old body become valid again once the cache expired.
+
+Alarm bodies come in two shapes — a lean one (event, rule, severity, active,
+ts) and a richer one that also carries the subject, message, inputs and
+thresholds. The module accepts both; the lean shape is the default on the
+KORELDA side, and which one you receive is the plant operator's decision.
+
+Events other than `rule_alarm` (test deliveries, notifications, scheduled
+reports) are answered with `200` and ignored — a valid signature is never
+answered with an error just because the module has nothing to do.
 
 ## Licence
 

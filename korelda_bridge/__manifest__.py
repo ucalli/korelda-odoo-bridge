@@ -54,13 +54,12 @@ Licence: LGPL-3.
         "maintenance",
         "mail",
     ],
+    # 🔴 SIRA ANLAMLI: ayar ekranı `action_korelda_mapping` eylemine
+    # `%(...)d` ile atıf yapıyor; eylem ondan ÖNCE tanımlanmış olmalı.
     "data": [
-        # Erişim kuralları — modelin kendisi FAZ 1.3'te geliyor.
         "security/ir.model.access.csv",
-        # Ayar ekranı (paylaşılan secret + varsayılan ekipman) — FAZ 1.4.
-        "views/res_config_settings_views.xml",
-        # Eşleme listesi ve menüsü — FAZ 1.3/1.4.
         "views/korelda_mapping_views.xml",
+        "views/res_config_settings_views.xml",
     ],
     "application": False,
     "installable": True,
