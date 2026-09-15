@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Ayar ekranı: paylaşılan secret + varsayılan ekipman.
+        İçerik FAZ 1.4'te gelir; dosya manifest'te listelendiği için
+        şimdiden var ve boş yüklenir (kurulum kırılmasın).
+    -->
+</odoo>
