@@ -44,7 +44,14 @@
                 <field name="equipment_id"/>
                 <filter name="inactive" string="Archived"
                         domain="[('active', '=', False)]"/>
-                <group expand="0" string="Group By">
+                <!--
+                    Öznitelik YOK. Odoo 19'da `<group>` üzerindeki `expand`
+                    ve `string` search görünümünde GEÇERSİZ (RNG reddediyor);
+                    18'de ikisi de opsiyoneldi. Özniteliksiz biçim her iki
+                    sürümde de çalışır → iki dal arasındaki fark yalnız
+                    sürüm dizgisi kalır.
+                -->
+                <group>
                     <filter name="group_equipment" string="Equipment"
                             context="{'group_by': 'equipment_id'}"/>
                 </group>

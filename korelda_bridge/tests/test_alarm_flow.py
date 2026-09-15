@@ -214,6 +214,25 @@ class TestKoreldaAlarmFlow(TransactionCase):
                     {"rule_id": "r-tek", "equipment_id": self.yedek.id}
                 )
 
+    def test_gorulmus_imza_kisiti_GERCEKTEN_var(self):
+        """🔴 Replay korumasının YARIŞ backstop'u veritabanında olmalı.
+
+        Odoo 19'da `_sql_constraints` sessizce yok sayılıyor; kısıt
+        oluşmazsa eşzamanlı iki özdeş istek ikisi de işlenebilirdi. Bu
+        kaybın görünür bir belirtisi YOKTU — bu yüzden kısıtın varlığı
+        doğrudan sınanır.
+        """
+        from psycopg2 import IntegrityError
+
+        from odoo.tools import mute_logger
+
+        Seen = self.env["korelda.webhook.seen"]
+        Seen.create({"signature": "sha256=kisit-testi"})
+        with self.assertRaises(IntegrityError), mute_logger("odoo.sql_db"):
+            with self.cr.savepoint():
+                Seen.create({"signature": "sha256=kisit-testi"})
+                self.env.flush_all()
+
     # ── enjeksiyon ──────────────────────────────────────────────────────
 
     def test_govde_metni_html_olarak_kacirilir(self):
