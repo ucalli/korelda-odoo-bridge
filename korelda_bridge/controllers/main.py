@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 
 import psycopg2
 
-from odoo import http
+from odoo import SUPERUSER_ID, http
 from odoo.http import request
 
 from ..tools import webhook as wh
@@ -41,6 +41,14 @@ class KoreldaWebhookController(http.Controller):
         methods=["POST"],
         csrf=False,
         save_session=False,
+        # 🔴 AÇIKÇA yazılmalı. Odoo `readonly`yi `auth == "none"` olduğunda
+        # **True** varsayar (`odoo/http.py`: `default_auth == 'none'`) —
+        # kimliksiz uçları okuma sanır. Bu uç YAZAR (talep + görülmüş imza):
+        # varsayılan bırakılırsa her istek önce salt-okunur imleçle koşup
+        # "cannot execute INSERT in a read-only transaction" ile düşer, Odoo
+        # yeniden dener ve sonuç doğru çıkar — ama her webhook iki kez koşar
+        # ve günlüğe ERROR düşer.
+        readonly=False,
     )
     def korelda_webhook(self, **kwargs):
         # 🔴 HAM BAYTLAR. `type="http"` bilinçli: `type="json"` gövdeyi
@@ -48,8 +56,15 @@ class KoreldaWebhookController(http.Controller):
         body = request.httprequest.get_data()
         header = request.httprequest.headers.get(wh.SIGNATURE_HEADER) or ""
 
+        # 🔴 `auth="none"` ortamı KULLANICISIZDIR (uid None) ve `sudo()` bunu
+        # düzeltmez — Odoo 13'ten beri `sudo()` uid'i değiştirmez, yalnız
+        # süper-kullanıcı bayrağı koyar. Kullanıcı yoksa `env.company` da boş
+        # kalır ve `maintenance.request.company_id` NOT NULL kısıtına takılır.
+        # Bu yüzden ortam AÇIKÇA gerçek bir kullanıcıya bağlanır.
+        env = request.env(user=SUPERUSER_ID)
+
         secret = (
-            request.env["ir.config_parameter"].sudo().get_param(SECRET_PARAM) or ""
+            env["ir.config_parameter"].get_param(SECRET_PARAM) or ""
         ).strip()
         if not secret:
             # Yapılandırılmamış kurulum imzasız gövdeyi kabul ETMEZ.
@@ -79,30 +94,26 @@ class KoreldaWebhookController(http.Controller):
             return self._reject("stale")
 
         # K7 · 2. yarı — görülmüş imza.
-        if not self._remember(header):
+        if not self._remember(env, header):
             # Sözleşme §4/2: tekrar İŞLENMEZ ve 2xx döner (idempotent kabul).
             _logger.info("KORELDA webhook: imza daha önce işlendi — yok sayıldı")
             return self._ok(handled=False, reason="duplicate")
 
         kind, event = wh.classify(payload)
         if kind == "alarm":
-            return self._handle_alarm(payload)
+            return self._handle_alarm(env, payload)
         # İmza geçerli; yalnız bu modülün işi değil → 401 DEĞİL, 200.
         return self._ok(handled=False, reason=kind, event=event)
 
     # ── alarm işleyicisi ────────────────────────────────────────────────
 
-    def _handle_alarm(self, payload):
+    def _handle_alarm(self, env, payload):
         """``rule_alarm`` → bakım talebi (K10-K13).
 
         Karar ve kayıt işlemleri modelde (``maintenance.request``); controller
         yalnız çağırır ve sonucu yanıta çevirir.
         """
-        sonuc = (
-            request.env["maintenance.request"]
-            .sudo()
-            .korelda_process_alarm(payload)
-        )
+        sonuc = env["maintenance.request"].korelda_process_alarm(payload)
         return self._ok(
             handled=sonuc.get("handled"),
             reason=sonuc.get("reason"),
@@ -111,20 +122,28 @@ class KoreldaWebhookController(http.Controller):
 
     # ── görülmüş-imza deposu ────────────────────────────────────────────
 
-    def _remember(self, signature):
+    def _remember(self, env, signature):
         """İmzayı kaydet. İlk kez görülüyorsa ``True``, tekrarsa ``False``.
 
         ``unique`` kısıtı kararı **veritabanına** verir: eşzamanlı iki özdeş
         istek yarışsa bile yalnız biri kaydı yazabilir. Savepoint, kısıt
         ihlalinin dış işlemi düşürmesini engeller.
         """
-        seen = request.env["korelda.webhook.seen"].sudo()
+        seen = env["korelda.webhook.seen"]
+        # Önce BAK: olağan tekrar yolu böylece sessizdir. Doğrudan INSERT
+        # denemek her tekrarda PostgreSQL kısıt ihlali üretir ve Odoo onu
+        # ERROR seviyesinde log'lar — yöneticinin gördüğü "hata" aslında
+        # korumanın çalıştığı andır. Gürültü bir kusur değil ama yanıltıcı.
+        if seen.search_count([("signature", "=", signature)]):
+            return False
         try:
-            with request.env.cr.savepoint():
+            with env.cr.savepoint():
                 seen.create({"signature": signature})
                 # INSERT'i şimdi zorla ki kısıt ihlali BURADA yakalansın.
-                request.env.flush_all()
+                env.flush_all()
         except psycopg2.IntegrityError:
+            # Buraya yalnız YARIŞ düşer: iki özdeş istek aynı anda geldi ve
+            # ikisi de kontrolü geçti. Kısıt son sözü söyler.
             return False
         self._prune(seen)
         return True
