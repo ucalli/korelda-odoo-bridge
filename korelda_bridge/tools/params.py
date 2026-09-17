@@ -5,8 +5,8 @@ akışı (varsayılan ekipman) bu adları kullanır. Ortak bir yerde durmazlarsa
 model katmanı controller'ı import etmek zorunda kalırdı — ters bağımlılık.
 """
 
-#: Paylaşılan webhook secret'ı. KORELDA tarafındaki `BMS_WEBHOOK_SECRET_<ID>`
-#: ile aynı değer.
+#: Paylaşılan webhook secret'ı. Gönderen (KORELDA) tarafında bu hedef için
+#: tanımlanan secret ile aynı değer.
 SECRET_PARAM = "korelda_bridge.webhook_secret"
 
 #: Hiçbir eşleme tutmazsa kullanılacak ekipman (opsiyonel).

@@ -62,6 +62,11 @@ class KoreldaWebhookController(http.Controller):
         # kalır ve `maintenance.request.company_id` NOT NULL kısıtına takılır.
         # Bu yüzden ortam AÇIKÇA gerçek bir kullanıcıya bağlanır.
         env = request.env(user=SUPERUSER_ID)
+        # 🔴 Dil de açıkça bağlanır. Gönderen tarayıcı değil, `Accept-Language`
+        # taşımaz → Odoo `en_US`e düşer ve Türkçe bir kurulumda bile talep
+        # başlığı / sohbet notları İngilizce yazılırdı. Kalıcı kayıt
+        # kurulumun dilinde olmalı: yönetici kullanıcının dili.
+        env = env(context=dict(env.context, lang=self._install_lang(env)))
 
         secret = (
             env["ir.config_parameter"].get_param(SECRET_PARAM) or ""
@@ -104,6 +109,15 @@ class KoreldaWebhookController(http.Controller):
             return self._handle_alarm(env, payload)
         # İmza geçerli; yalnız bu modülün işi değil → 401 DEĞİL, 200.
         return self._ok(handled=False, reason=kind, event=event)
+
+    @staticmethod
+    def _install_lang(env):
+        """Kurulumun dili: yönetici kullanıcının (etkin) dili, yoksa ``en_US``."""
+        admin = env.ref("base.user_admin", raise_if_not_found=False)
+        lang = admin.lang if admin else None
+        if lang and env["res.lang"]._lang_get(lang):
+            return lang
+        return "en_US"
 
     # ── alarm işleyicisi ────────────────────────────────────────────────
 

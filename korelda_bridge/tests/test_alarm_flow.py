@@ -70,7 +70,7 @@ class TestKoreldaAlarmFlow(TransactionCase):
         )
 
     def test_oncelik_bes_seviye(self):
-        """K11 — her önem kendi kovasına; `critical` ayrıca `[KRİTİK]`."""
+        """K11 — her önem kendi kovasına; `critical` ayrıca `[CRITICAL]`."""
         beklenen = [
             ("info", "0", False),
             ("low", "1", False),
@@ -86,7 +86,20 @@ class TestKoreldaAlarmFlow(TransactionCase):
             )
             talep = self._talep(sonuc["request_id"])
             self.assertEqual(talep.priority, oncelik, onem)
-            self.assertEqual(talep.name.startswith("[KRİTİK] "), kritik, onem)
+            self.assertEqual(talep.name.startswith("[CRITICAL] "), kritik, onem)
+
+    def test_kritik_oneki_cevrilir(self):
+        """K11 — önek Odoo çeviri katmanından: EN `[CRITICAL]`, TR `[KRİTİK]`."""
+        self.env["res.lang"]._activate_lang("tr_TR")
+        govde = dict(severity="critical", subject="Donma riski")
+        en = self.Request.with_context(lang="en_US").korelda_process_alarm(
+            self._govde(rule={"id": "r-dil-en", "name": "K"}, **govde)
+        )
+        tr = self.Request.with_context(lang="tr_TR").korelda_process_alarm(
+            self._govde(rule={"id": "r-dil-tr", "name": "K"}, **govde)
+        )
+        self.assertEqual(self._talep(en["request_id"]).name, "[CRITICAL] Donma riski")
+        self.assertEqual(self._talep(tr["request_id"]).name, "[KRİTİK] Donma riski")
 
     # ── eşleme (K10) ────────────────────────────────────────────────────
 
@@ -118,7 +131,7 @@ class TestKoreldaAlarmFlow(TransactionCase):
         sonuc = self.Request.korelda_process_alarm(
             self._govde(
                 rule={"id": "r-inputs", "name": "K"},
-                inputs=[{"ref": f"cihaz:{self.ekipman.name}", "value": 1}],
+                inputs=[{"ref": f"equipment/{self.ekipman.name}", "value": 1}],
             )
         )
         self.assertTrue(self._talep(sonuc["request_id"]).korelda_unmapped)

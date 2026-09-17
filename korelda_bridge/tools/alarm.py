@@ -6,7 +6,8 @@ gövdeden türetilen **kararlar** var, böylece Odoo kurulu olmadan da sınanır
 
 #: Önem → Odoo ``maintenance.request.priority`` (seçim kümesi 0..3).
 #: ``high`` ve ``critical`` aynı en yüksek kovaya düşer — Odoo'da dördüncü bir
-#: seviye yok; ayrım başlıktaki ``[KRİTİK]`` öneki ile korunur.
+#: seviye yok; ayrım başlıktaki kritik öneki ile korunur (öneki model katmanı
+#: çeviriyle ekler — bkz. ``request_title``).
 SEVERITY_PRIORITY = {
     "info": "0",
     "low": "1",
@@ -18,9 +19,6 @@ SEVERITY_PRIORITY = {
 #: Bilinmeyen/eksik önem için kova. **Bilerek "düşük" DEĞİL**: tanımadığımız
 #: bir önemi sessizce önemsizleştirmek, gerçek riski gizlerdi.
 UNKNOWN_PRIORITY = "2"
-
-#: En yüksek önemin başlık öneki (K11).
-CRITICAL_PREFIX = "[KRİTİK] "
 
 CRITICAL_SEVERITY = "critical"
 
@@ -61,7 +59,11 @@ def request_name(payload, fallback="KORELDA alarm"):
     """Bakım talebinin başlığı.
 
     Sıra: gövdedeki ``subject`` (yalnız zengin gövdede var) → kural adı →
-    kural id'si → sabit yedek. Önem ``critical`` ise başa ``[KRİTİK]`` eklenir.
+    kural id'si → sabit yedek.
+
+    Kritik öneki burada **eklenmez**: önek kullanıcıya görünen bir metindir ve
+    çevrilmesi gerekir; çeviri Odoo katmanının işidir, bu modül Odoo'suz
+    kalır. Önek kararı için ``request_title``.
     """
     payload = payload or {}
     subject = payload.get("subject")
@@ -69,9 +71,19 @@ def request_name(payload, fallback="KORELDA alarm"):
     if not ad:
         etiket = rule_label(payload)
         ad = f"{fallback}: {etiket}" if etiket else fallback
-    if is_critical(payload.get("severity")):
-        ad = CRITICAL_PREFIX + ad
     return ad
+
+
+def request_title(payload, fallback="KORELDA alarm"):
+    """``(başlık, kritik_mi)`` — K11.
+
+    Başlık öneksizdir; ``kritik_mi`` doğruysa çağıran (model) çevrilmiş kritik
+    önekini başa ekler.
+    """
+    return (
+        request_name(payload, fallback),
+        is_critical((payload or {}).get("severity")),
+    )
 
 
 def is_cleared(payload):

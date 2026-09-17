@@ -4,7 +4,8 @@
     "category": "Maintenance",
     "license": "LGPL-3",
     "author": "KORELDA",
-    "website": "https://github.com/ucalli/korelda-odoo-bridge",
+    "website": "https://www.korelda.ai",
+    "support": "support@korelda.ai",
     "summary": (
         "Turn signed HVAC alarm webhooks from a KORELDA installation into "
         "Odoo maintenance requests."
@@ -60,6 +61,11 @@ Licence: LGPL-3.
         "security/ir.model.access.csv",
         "views/korelda_mapping_views.xml",
         "views/res_config_settings_views.xml",
+    ],
+    "images": [
+        "static/description/korelda_bridge_screenshot.png",
+        "static/description/korelda_settings.png",
+        "static/description/korelda_mapping.png",
     ],
     "application": False,
     "installable": True,
