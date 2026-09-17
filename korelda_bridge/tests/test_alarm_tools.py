@@ -74,19 +74,19 @@ class BaslikTest(unittest.TestCase):
         self.assertNotIn("subject", yalin)
         self.assertEqual(al.request_name(yalin), "KORELDA alarm: Donma")
 
-    def test_kritik_bayragi_onek_URETMEZ(self):
+    def test_kritik_isareti_onek_URETMEZ(self):
         """Önek çevrilir → saf katman yalnız bayrak döndürür, metin değil."""
         p = {"subject": "Donma riski", "severity": "critical"}
         self.assertEqual(al.request_name(p), "Donma riski")
         self.assertEqual(al.request_title(p), ("Donma riski", True))
         self.assertFalse(hasattr(al, "CRITICAL_PREFIX"))
 
-    def test_kritik_bayragi_yalniz_critical(self):
+    def test_kritik_isareti_yalniz_critical(self):
         for onem in ("high", "warning", "low", "info", None, "uydurma", 3):
             p = {"subject": "X", "severity": onem}
             self.assertEqual(al.request_title(p), ("X", False), onem)
 
-    def test_kritik_bayragi_buyuk_harf_ve_bosluk(self):
+    def test_kritik_isareti_buyuk_harf_ve_bosluk(self):
         p = {"rule": {"name": "Donma"}, "severity": " CRITICAL "}
         self.assertEqual(al.request_title(p), ("KORELDA alarm: Donma", True))
 
