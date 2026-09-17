@@ -63,6 +63,7 @@ Licence: LGPL-3.
         "views/res_config_settings_views.xml",
     ],
     "images": [
+        "static/description/korelda_bridge_cover_screenshot.gif",
         "static/description/korelda_bridge_screenshot.png",
         "static/description/korelda_settings.png",
         "static/description/korelda_mapping.png",
