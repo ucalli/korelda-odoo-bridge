@@ -1,0 +1,332 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* korelda_bridge
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20260908\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-17 08:18+0000\n"
+"PO-Revision-Date: 2026-09-17 08:18+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.maintenance_request_view_form_korelda
+msgid ""
+"<span class=\"badge text-bg-warning\">\n"
+"                        KORELDA: equipment not mapped\n"
+"                    </span>"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_mapping__active
+msgid "Active"
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid "Alarm"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,help:korelda_bridge.field_maintenance_request__korelda_unmapped
+msgid ""
+"Alarm bir ekipmana eşlenemedi. Talep yine de açıldı; eşlemeyi tamamlayıp bu "
+"işareti kaldırın."
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid "Alarm cleared in KORELDA."
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid "Alarm reported again in KORELDA."
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.actions.act_window,help:korelda_bridge.action_korelda_mapping
+msgid ""
+"An alarm whose rule is not mapped still opens a maintenance\n"
+"                request — it is just flagged as unmapped, so nothing is lost\n"
+"                while you fill this in."
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.korelda_mapping_view_search
+msgid "Archived"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,help:korelda_bridge.field_res_config_settings__korelda_webhook_secret
+msgid ""
+"Aynı değer KORELDA tarafında da yazılıdır. Gelen her isteğin imzası bununla "
+"doğrulanır — uzun ve rastgele olmalı, her Odoo kurulumu için ayrı."
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,help:korelda_bridge.field_res_config_settings__korelda_default_equipment_id
+msgid ""
+"Bir kural hiçbir ekipmana eşlenmemişse talep bu ekipmana açılır. Boş "
+"bırakılabilir: o durumda talep yine açılır ve 'eşlenmemiş' olarak "
+"işaretlenir."
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.constraint,message:korelda_bridge.constraint_korelda_mapping_rule_id_uniq
+msgid "Bu KORELDA kuralı için zaten bir eşleme var."
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.constraint,message:korelda_bridge.constraint_korelda_webhook_seen_signature_uniq
+msgid "Bu imza zaten işlendi (replay koruması)."
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,help:korelda_bridge.field_korelda_mapping__equipment_id
+msgid "Bu kuraldan gelen alarmların açacağı talebin ekipmanı."
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,help:korelda_bridge.field_maintenance_request__korelda_rule_id
+msgid ""
+"Bu talebi açan KORELDA kuralı. Aynı kuralın tekrar eden alarmları açık "
+"talebe yorum olarak düşer, yeni talep açmaz."
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid "Cleared"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model,name:korelda_bridge.model_res_config_settings
+msgid "Config Settings"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_mapping__create_uid
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_webhook_seen__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_mapping__create_date
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_webhook_seen__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_res_config_settings__korelda_default_equipment_id
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.res_config_settings_view_form
+msgid "Default equipment"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_mapping__display_name
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_webhook_seen__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_mapping__equipment_id
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.korelda_mapping_view_search
+msgid "Equipment"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,help:korelda_bridge.field_korelda_mapping__rule_id
+msgid "Gelen gövdedeki rule.id değeri. Birebir eşleşmelidir."
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_mapping__id
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_webhook_seen__id
+msgid "ID"
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.res_config_settings_view_form
+msgid "KORELDA Bridge"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.ui.menu,name:korelda_bridge.menu_korelda_mapping
+msgid "KORELDA Rule Mapping"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model,name:korelda_bridge.model_korelda_mapping
+msgid "KORELDA kuralı → bakım ekipmanı eşlemesi"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_mapping__rule_id
+#: model:ir.model.fields,field_description:korelda_bridge.field_maintenance_request__korelda_rule_id
+msgid "KORELDA rule id"
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/korelda_mapping.py:0
+msgid "KORELDA rule id boş olamaz."
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.actions.act_window,name:korelda_bridge.action_korelda_mapping
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.korelda_mapping_view_form
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.korelda_mapping_view_list
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.korelda_mapping_view_search
+msgid "KORELDA rule mapping"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_res_config_settings__korelda_webhook_secret
+msgid "KORELDA shared secret"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model,name:korelda_bridge.model_korelda_webhook_seen
+msgid "KORELDA webhook — görülmüş imza (replay koruması)"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_maintenance_request__korelda_unmapped
+msgid "KORELDA: equipment not mapped"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,help:korelda_bridge.field_korelda_webhook_seen__signature
+msgid "Kaydedilen X-BMS-Signature başlığı. Gövde değil, secret değil."
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_mapping__write_uid
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_webhook_seen__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_mapping__write_date
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_webhook_seen__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model,name:korelda_bridge.model_maintenance_request
+msgid "Maintenance Request"
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.actions.act_window,help:korelda_bridge.action_korelda_mapping
+msgid "Map a KORELDA rule to a piece of equipment"
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.res_config_settings_view_form
+msgid "Map each KORELDA rule to the equipment it concerns."
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid "Message"
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid ""
+"No equipment is mapped for this KORELDA rule, and no default equipment is "
+"set. The request was opened anyway — set the mapping so the next alarm lands"
+" on the right equipment."
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid "Opened from a KORELDA alarm."
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.res_config_settings_view_form
+msgid ""
+"Receive signed HVAC alarms from a KORELDA installation and open maintenance "
+"requests."
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid "Repeat"
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid "Rule"
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.res_config_settings_view_form
+msgid "Rule mapping"
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid "Severity"
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.res_config_settings_view_form
+msgid "Shared secret"
+msgstr ""
+
+#. module: korelda_bridge
+#: model:ir.model.fields,field_description:korelda_bridge.field_korelda_webhook_seen__signature
+msgid "Signature"
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.korelda_mapping_view_form
+msgid ""
+"The rule id must match <code>rule.id</code> in the alarm\n"
+"                        sent by KORELDA, character for character."
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.res_config_settings_view_form
+msgid ""
+"The same value must be set on the KORELDA side. Every incoming delivery is "
+"authenticated with it — use a long random value, and a different one for "
+"each Odoo instance."
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.res_config_settings_view_form
+msgid ""
+"Used when an alarm's rule is not mapped to any equipment. May be left empty:"
+" the request is opened anyway and flagged as unmapped."
+msgstr ""
+
+#. module: korelda_bridge
+#. odoo-python
+#: code:addons/korelda_bridge/models/maintenance_request.py:0
+msgid "[CRITICAL]"
+msgstr ""
+
+#. module: korelda_bridge
+#: model_terms:ir.ui.view,arch_db:korelda_bridge.korelda_mapping_view_form
+msgid "e.g. ahu1_supply_low"
+msgstr ""

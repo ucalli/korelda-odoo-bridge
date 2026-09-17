@@ -2,14 +2,14 @@
 <odoo>
 
     <!--
-        Ayarlar Maintenance uygulamasının KENDİ sekmesine eklenir; modül
-        `application: False` olduğu için kendi `<app>` sekmesini açmaz —
-        bir köprü modülü, ayar ekranında ayrı bir uygulama gibi görünmemeli.
-        Çapa Odoo 18.0 kaynağından doğrulandı:
+        Settings are added to the Maintenance app's OWN tab; the module is
+        `application: False`, so it does not open an `<app>` tab of its own —
+        a bridge module should not look like a separate app on the settings
+        screen. Anchor verified against the Odoo 18.0 source:
         `maintenance/views/res_config_settings_views.xml` → `<app name="maintenance">`.
 
-        K4 — burada YALNIZ bağlantı ayarları var. Kural, eşik ve cihaz
-        yapılandırması KORELDA'da kalır; buraya kopyalanmaz.
+        K4 — ONLY connection settings live here. Rule, threshold and device
+        configuration stays in KORELDA and is not duplicated here.
     -->
     <record id="res_config_settings_view_form" model="ir.ui.view">
         <field name="name">res.config.settings.view.form.inherit.korelda_bridge</field>

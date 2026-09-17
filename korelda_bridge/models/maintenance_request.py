@@ -93,8 +93,14 @@ class MaintenanceRequest(models.Model):
     def _korelda_open_new(self, payload, anahtar):
         """Yeni bakım talebi aç."""
         ekipman, eslendi = self._korelda_equipment(anahtar)
+        ad, kritik = al.request_title(payload)
+        if kritik:
+            # K11 — önek kullanıcıya görünür → çevrilir (`i18n/*.po`). Dil
+            # `self.env.lang`; webhook yolunda controller onu kurulumun
+            # diline bağlar.
+            ad = "%s %s" % (_("[CRITICAL]"), ad)
         degerler = {
-            "name": al.request_name(payload),
+            "name": ad,
             "priority": al.priority_for(payload.get("severity")),
             "korelda_rule_id": anahtar or False,
             "korelda_unmapped": not eslendi,

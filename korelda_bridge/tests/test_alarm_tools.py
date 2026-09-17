@@ -34,7 +34,7 @@ class OncelikTest(unittest.TestCase):
             self.assertEqual(al.priority_for(onem), oncelik, onem)
 
     def test_high_ve_critical_ayni_kovada_ama_baslikla_ayrilir(self):
-        """Odoo'da dördüncü öncelik yok; ayrım ``[KRİTİK]`` önekinde."""
+        """Odoo'da dördüncü öncelik yok; ayrım başlıktaki kritik önekinde."""
         self.assertEqual(al.priority_for("high"), al.priority_for("critical"))
         self.assertFalse(al.is_critical("high"))
         self.assertTrue(al.is_critical("critical"))
@@ -74,14 +74,25 @@ class BaslikTest(unittest.TestCase):
         self.assertNotIn("subject", yalin)
         self.assertEqual(al.request_name(yalin), "KORELDA alarm: Donma")
 
-    def test_kritik_oneki(self):
+    def test_kritik_bayragi_onek_URETMEZ(self):
+        """Önek çevrilir → saf katman yalnız bayrak döndürür, metin değil."""
         p = {"subject": "Donma riski", "severity": "critical"}
-        self.assertEqual(al.request_name(p), "[KRİTİK] Donma riski")
+        self.assertEqual(al.request_name(p), "Donma riski")
+        self.assertEqual(al.request_title(p), ("Donma riski", True))
+        self.assertFalse(hasattr(al, "CRITICAL_PREFIX"))
 
-    def test_kritik_oneki_yalniz_critical(self):
-        for onem in ("high", "warning", "low", "info", None, "uydurma"):
+    def test_kritik_bayragi_yalniz_critical(self):
+        for onem in ("high", "warning", "low", "info", None, "uydurma", 3):
             p = {"subject": "X", "severity": onem}
-            self.assertEqual(al.request_name(p), "X", onem)
+            self.assertEqual(al.request_title(p), ("X", False), onem)
+
+    def test_kritik_bayragi_buyuk_harf_ve_bosluk(self):
+        p = {"rule": {"name": "Donma"}, "severity": " CRITICAL "}
+        self.assertEqual(al.request_title(p), ("KORELDA alarm: Donma", True))
+
+    def test_request_title_bos_govde(self):
+        self.assertEqual(al.request_title(None), ("KORELDA alarm", False))
+        self.assertEqual(al.request_title({}), ("KORELDA alarm", False))
 
     def test_bos_subject_kural_adina_duser(self):
         p = {"subject": "   ", "rule": {"name": "Donma"}}

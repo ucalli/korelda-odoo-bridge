@@ -83,6 +83,28 @@ class TestKoreldaWebhookHttp(HttpCase):
         self.assertEqual(talep.korelda_rule_id, "http-r1")
         self.assertEqual(talep.priority, "3")
 
+    def test_kritik_onek_kurulum_dilinde(self):
+        """🔴 Regresyon: gönderen `Accept-Language` taşımaz → dil `en_US`e
+        düşüyordu. Önek kurulumun (yönetici kullanıcının) dilinde yazılmalı."""
+        admin = self.env.ref("base.user_admin")
+        ham = self._govde(
+            rule={"id": "http-dil-en", "name": "X"}, severity="critical"
+        )
+        yanit = self._gonder(ham)
+        self.assertEqual(yanit.status_code, 200, yanit.text)
+        talep = self.Request.browse(yanit.json()["request_id"])
+        self.assertTrue(talep.name.startswith("[CRITICAL] "), talep.name)
+
+        self.env["res.lang"]._activate_lang("tr_TR")
+        admin.lang = "tr_TR"
+        ham = self._govde(
+            rule={"id": "http-dil-tr", "name": "X"}, severity="critical"
+        )
+        yanit = self._gonder(ham)
+        self.assertEqual(yanit.status_code, 200, yanit.text)
+        talep = self.Request.browse(yanit.json()["request_id"])
+        self.assertTrue(talep.name.startswith("[KRİTİK] "), talep.name)
+
     def test_gecersiz_imza_401_ve_kayit_ACMAZ(self):
         ham = self._govde(rule={"id": "http-bad", "name": "X"})
         yanit = self._gonder(ham, imza=self._imza(ham, secret="yanlis"))
